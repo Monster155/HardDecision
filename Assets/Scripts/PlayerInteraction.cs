@@ -1,19 +1,12 @@
-using UnityEngine;
+﻿using UnityEngine;
 
 public class PlayerInteraction : MonoBehaviour
 {
-    [SerializeField] private float interactionRadius = 2f;
-    private void Update()
-    {
-        if (Input.GetKeyDown(KeyCode.E))
-        {
-            FindInteractableObject()?.Interact();
-        }
-    }
+    [SerializeField] private float _interactionRadius = 2f;
 
     private IInteractable FindInteractableObject()
     {
-        Collider[] colliders = Physics.OverlapSphere(transform.position, interactionRadius);
+        Collider[] colliders = Physics.OverlapSphere(transform.position, _interactionRadius);
 
         foreach (Collider collider in colliders)
         {
@@ -28,6 +21,6 @@ public class PlayerInteraction : MonoBehaviour
 
     private void OnDrawGizmos()
     {
-        Gizmos.DrawWireSphere(transform.position, interactionRadius);
+        Gizmos.DrawWireSphere(transform.position, _interactionRadius);
     }
 }
