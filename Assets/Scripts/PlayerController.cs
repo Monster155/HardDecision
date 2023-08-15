@@ -1,6 +1,3 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using Interactables;
 using UnityEngine;
 using UnityEngine.AI;
@@ -8,6 +5,7 @@ using UnityEngine.AI;
 public class PlayerController : MonoBehaviour
 {
     [SerializeField] private NavMeshAgent _agent;
+    [SerializeField] private PlayerAnimator _playerAnimator;
 
     private IPlayerInteractionSolver _playerInteractionSolver;
 
@@ -20,24 +18,34 @@ public class PlayerController : MonoBehaviour
             {
                 if (hit.transform.tag.Equals(Constants.MovableArea))
                 {
-                    _agent.destination = hit.point;
                     _playerInteractionSolver = null;
+                    _agent.destination = hit.point;
                 }
                 else if (hit.transform.tag.Equals(Constants.InteractableArea))
                 {
                     _playerInteractionSolver = hit.transform.GetComponent<IPlayerInteractionSolver>();
                     _playerInteractionSolver.Interact();
-
-                    _agent.destination = _playerInteractionSolver.GetDestinationPosition();
                 }
             }
         }
+
+        // if  =null -> "_agent.destination = hit.point;" already set
+        if (_playerInteractionSolver != null)
+            _agent.destination = _playerInteractionSolver.GetDestinationPosition();
 
         // if player reached destination point
         if (_playerInteractionSolver != null
             && Vector3.Distance(_agent.transform.position, _playerInteractionSolver.GetDestinationPosition()) <= Constants.PlayerReachDistance)
         {
-            _playerInteractionSolver.DestinationReached();
+            PlayerAnimationsNames anim = _playerInteractionSolver.DestinationReached();
+            _playerAnimator.PlayAnim(anim);
+        }
+        else
+        {
+            if (Vector3.Distance(_agent.transform.position, _agent.destination) <= Constants.PlayerWalkDistance)
+                _playerAnimator.PlayAnim(PlayerAnimationsNames.Idle);
+            else
+                _playerAnimator.PlayAnim(PlayerAnimationsNames.Walk);
         }
     }
 }
