@@ -11,6 +11,14 @@ public class PlayerController : MonoBehaviour
 
     void Update()
     {
+        // rotate player to moving side
+        if (_agent.desiredVelocity.x > 0)
+        {
+            transform.localScale = Vector3.one;
+        } else if (_agent.desiredVelocity.x < 0)
+        {
+            transform.localScale = new Vector3(-1, 1, 1);
+        }
         if (Input.GetMouseButtonDown(0))
         {
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
