@@ -1,40 +1,53 @@
 ﻿using System;
+using System.Collections;
 using UnityEngine;
 
 public class PlayerAnimator : MonoBehaviour
 {
     [SerializeField] private Animator _animator;
+    [Space]
+    [SerializeField] private AnimationClip _idle;
+    [SerializeField] private AnimationClip _walk;
+    [SerializeField] private AnimationClip _pick;
+    [SerializeField] private AnimationClip _attack;
+    [SerializeField] private AnimationClip _hide;
 
-    private const string IDLE_ANIM = "IdleAnim";
-    private const string WALK_ANIM = "WalkAnim";
-    private const string PICK_ANIM = "PickAnim";
-    private const string ATTACK_ANIM = "HandAttackAnim";
-    private const string HIDE_ANIM = "HideAnim";
-
-    public void PlayAnim(PlayerAnimationsNames animName)
+    private AnimationClip GetAnimClip(PlayerAnimationsNames animName)
     {
         switch (animName)
         {
             case PlayerAnimationsNames.Idle:
-                _animator.Play(IDLE_ANIM);
-                break;
+                return _idle;
             case PlayerAnimationsNames.Walk:
-                _animator.Play(WALK_ANIM);
-                break;
+                return _walk;
             case PlayerAnimationsNames.Run:
-                _animator.Play(WALK_ANIM);
-                break;
+                return _walk;
             case PlayerAnimationsNames.KnifeAttack:
-                _animator.Play(ATTACK_ANIM);
-                break;
+                return _attack;
             case PlayerAnimationsNames.Hide:
-                _animator.Play(HIDE_ANIM);
-                break;
+                return _hide;
             case PlayerAnimationsNames.Pick:
-                _animator.Play(PICK_ANIM);
-                break;
+                return _pick;
             default:
                 throw new ArgumentOutOfRangeException(nameof(animName), animName, null);
         }
+    }
+
+    public void PlayAnim(PlayerAnimationsNames animName)
+    {
+        _animator.Play(GetAnimClip(animName).name);
+    }
+
+    public void PlayAnimOnce(PlayerAnimationsNames animName, Action whenAnimEnds)
+    {
+        PlayAnim(animName);
+        StartCoroutine(WaitAnimationEnds(GetAnimClip(animName).length, whenAnimEnds));
+    }
+
+    private IEnumerator WaitAnimationEnds(float time, Action actionOnEnd)
+    {
+        yield return new WaitForSeconds(time);
+
+        actionOnEnd.Invoke();
     }
 }

@@ -6,6 +6,8 @@ namespace Interactables
     public class NpcInteractionSolver : MonoBehaviour,IPlayerInteractionSolver
     {
         [SerializeField] private SpriteRenderer _renderer;
+        [SerializeField] private NpcAnimator _npcAnimator;
+        [SerializeField] private NPCPointsMove _npcPointsMove;
 
         public void Interact()
         {
@@ -16,11 +18,15 @@ namespace Interactables
         {
             return transform.position;
         }
-        public PlayerAnimationsNames DestinationReached()
+        public (PlayerAnimationsNames, bool) DestinationReached()
         {
             // activate another item shader
             _renderer.material.SetColor("_Color", Color.red);
-            return PlayerAnimationsNames.KnifeAttack;
+
+            _npcPointsMove.ChangeMovementState(false);
+            _npcAnimator.PlayAnim(NpcAnimationsNames.Deaf);
+
+            return (PlayerAnimationsNames.KnifeAttack, false);
         }
 
         private void OnMouseEnter()

@@ -16,11 +16,11 @@ namespace Interactables
         {
             return transform.position;
         }
-        public PlayerAnimationsNames DestinationReached()
+        public (PlayerAnimationsNames, bool) DestinationReached()
         {
             // activate another item shader
             _renderer.material.SetColor("_Color", Color.red);
-            return PlayerAnimationsNames.Pick;
+            return (PlayerAnimationsNames.Pick, false);
         }
     }
 }

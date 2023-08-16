@@ -6,6 +6,6 @@ namespace Interactables
     {
         public void Interact();
         public Vector3 GetDestinationPosition();
-        public PlayerAnimationsNames DestinationReached();
+        public (PlayerAnimationsNames, bool) DestinationReached();
     }
 }

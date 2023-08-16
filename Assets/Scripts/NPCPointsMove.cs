@@ -9,17 +9,20 @@ public class NPCPointsMove : MonoBehaviour
     [SerializeField] private float waitAtPointTime = 5f;
     // child component
     [SerializeField] private Transform visionTransform;
+    [SerializeField] private NpcAnimator _npcAnimator;
 
     private NavMeshAgent _navMeshAgent;
     private int _currentWayPointIndex = 0;
-    private bool _isMoving = true;
+    private bool _isMoving;
+    private Coroutine _moveCoroutine;
     private Vector3 _lastRotation = Vector3.zero;
     
     void Start()
     {
         _navMeshAgent = GetComponent<NavMeshAgent>();
 
-        StartCoroutine(MoveNPC());
+        _isMoving = false;
+        ChangeMovementState(true);
     }
 
     private void Update()
@@ -28,10 +31,27 @@ public class NPCPointsMove : MonoBehaviour
         visionTransform.rotation = Quaternion.Euler(GetVisionRotation());
     }
 
+    public void ChangeMovementState(bool isMoving)
+    {
+        if(isMoving == _isMoving)
+            return;
+
+        _isMoving = isMoving;
+        
+        if(_isMoving)
+            _moveCoroutine = StartCoroutine(MoveNPC());
+        else
+        {
+            StopCoroutine(_moveCoroutine);
+            _moveCoroutine = null;
+        }
+    }
+
     private IEnumerator MoveNPC()
     {
         while (_isMoving)
         {
+            _npcAnimator.PlayAnim(NpcAnimationsNames.Walk);
             // move NPC to _currentWayPoint
             while (Vector3.Distance(transform.position, wayPoints[_currentWayPointIndex].position) >= _navMeshAgent.stoppingDistance)
             {
@@ -39,6 +59,7 @@ public class NPCPointsMove : MonoBehaviour
                 yield return null;
             }
 
+            _npcAnimator.PlayAnim(NpcAnimationsNames.Idle);
             // stop NPC to wait for waitAtPointTime seconds at reached point
             yield return new WaitForSeconds(waitAtPointTime);
 

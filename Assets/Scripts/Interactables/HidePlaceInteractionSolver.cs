@@ -23,11 +23,11 @@ namespace Interactables
         {
             return transform.position;
         }
-        public PlayerAnimationsNames DestinationReached()
+        public (PlayerAnimationsNames, bool) DestinationReached()
         {
             // activate another item shader
             _renderer.material.SetColor("_Color", Color.clear);
-            return PlayerAnimationsNames.Hide;
+            return (PlayerAnimationsNames.Hide, true);
         }
 
         private void OnMouseEnter()
