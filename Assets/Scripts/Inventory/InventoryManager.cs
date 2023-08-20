@@ -3,7 +3,9 @@ using UnityEngine;
 namespace Inventory
 {
     public class InventoryManager : MonoBehaviour
-    { 
+    {
+        public static InventoryManager Instance;
+        
         public InventorySlot[] inventorySlots;
         public GameObject inventoryItemPrefab;
 
@@ -15,6 +17,13 @@ namespace Inventory
 
         private void Start ()
         {
+            if (Instance != null)
+            {
+                Destroy(gameObject);
+            }
+
+            Instance = this;
+            
             ChangeSelectedSlot(0);
         }
 
